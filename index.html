@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PV Product Slider — Standalone (VS Code)</title>
-  <meta name="description" content="Standalone product slider with thumbnails-as-dots + fly-in animation. Save as pv-product-slider-vscode.html and open in VS Code.">
+  <title>Website Feature Showcase</title>
+  <meta name="description" content="Standalone product slider with thumbnails-as-dots + fly-in animation.">
   <style>
     :root{
       --pv-bg: #FFF7F2; /* cream */
@@ -16,53 +16,270 @@
       --pv-gap: 18px;
       --pv-speed: 420ms;
     }
-    *{box-sizing:border-box}
-    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--pv-bg); color:var(--pv-contrast); padding:28px;}
-    .pv-product-slider{max-width:1100px;margin:0 auto;background:var(--pv-card);border-radius:calc(var(--pv-radius)+6px);padding:20px;position:relative;overflow:hidden;border:3px solid rgba(59,42,35,.14)}
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+
+    /* 🌈 BODY: colorful background + center layout */
+    body{
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      min-height:100vh;
+      color:var(--pv-contrast);
+      background:
+        radial-gradient(circle at top left, #ffe0f0 0, transparent 55%),
+        radial-gradient(circle at bottom right, #ffe8c5 0, transparent 55%),
+        linear-gradient(135deg,#ffeef3,#fff7f0);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px 16px;
+    }
+
+    /* shell to keep header + slider centered */
+    .pv-page-shell{
+      width:100%;
+      max-width:1200px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
+    }
+
+    /* 🔹 small header on top */
+    .pv-header{
+      text-align:center;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.7);
+      backdrop-filter:blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.06);
+      border:1px solid rgba(255,255,255,0.9);
+    }
+    .pv-header-title{
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      color:var(--pv-contrast);
+    }
+    .pv-header-sub{
+      margin-top:4px;
+      font-size:13px;
+      color:var(--pv-sub);
+    }
+
+    /* 🎨 slider card: more colorful & dynamic */
+    .pv-product-slider{
+      max-width:1100px;
+      width:100%;
+      margin:0 auto;
+      background:linear-gradient(135deg,#fbe0d4,#f7d6f0);
+      border-radius:calc(var(--pv-radius)+10px);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(59,42,35,.12);
+      box-shadow:
+        0 18px 45px rgba(200,107,90,0.18),
+        0 0 0 1px rgba(255,255,255,0.7);
+    }
+    /* soft pattern overlay */
+    .pv-product-slider::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background-image:
+        radial-gradient(circle at 0 0,rgba(255,255,255,0.35) 0,transparent 55%),
+        radial-gradient(circle at 100% 100%,rgba(255,255,255,0.28) 0,transparent 55%);
+      opacity:0.9;
+      pointer-events:none;
+    }
+    .pv-product-slider > *{
+      position:relative;
+      z-index:1;
+    }
+
     .pv-viewport{position:relative;min-height:300px}
-    .pv-slide{display:grid;grid-template-columns:1fr 1fr;gap:var(--pv-gap);align-items:center;position:absolute;inset:0;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .35s ease}
-    .pv-slide.pv-active{position:relative;opacity:1;pointer-events:auto;visibility:visible;z-index:1}
-    .pv-media{height:300px;border-radius:calc(var(--pv-radius)-4px);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;border:2px solid rgba(59,42,35,.06)}
-    .pv-media img{width:100%;height:100%;object-fit:cover;display:block}
-    .pv-content{padding:8px 10px;display:grid;gap:8px}
-    .pv-title{font-size:clamp(18px,2.4vw,26px);font-weight:700;margin:0;color:var(--pv-contrast)}
-    .pv-desc{margin:0;color:var(--pv-sub);font-size:15px;line-height:1.5}
-    .pv-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--pv-contrast);color:#fff;text-decoration:none;font-weight:600;width:fit-content}
-    .pv-thumbs{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-    .pv-thumb{width:52px;height:52px;border-radius:12px;overflow:hidden;border:2px solid rgba(59,42,35,.12);background:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
-    .pv-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .pv-thumb:hover{transform:translateY(-2px) rotate(-1.8deg);transition:transform .18s}
-    .pv-thumb[aria-selected="true"]{box-shadow:0 6px 0 rgba(200,107,90,0.12);border-color:var(--pv-accent)}
-    .pv-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.95);border:1px solid rgba(59,42,35,.08);cursor:pointer}
-    .pv-prev{left:12px}
-    .pv-next{right:12px}
-    .pv-nav:hover{background:var(--pv-accent);color:#fff;border-color:var(--pv-accent)}
-    @media (max-width:700px){.pv-slide{grid-template-columns:1fr;gap:10px}.pv-media{height:200px}.pv-product-slider{padding:14px}.pv-thumb{width:44px;height:44px}}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    .pv-slide{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:var(--pv-gap);
+      align-items:center;
+      position:absolute;
+      inset:0;
+      opacity:0;
+      pointer-events:none;
+      visibility:hidden;
+      transition:opacity .35s ease;
+    }
+    .pv-slide.pv-active{
+      position:relative;
+      opacity:1;
+      pointer-events:auto;
+      visibility:visible;
+      z-index:1;
+    }
+
+    .pv-media{
+      height:300px;
+      border-radius:calc(var(--pv-radius)-4px);
+      overflow:hidden;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid rgba(59,42,35,.06);
+      box-shadow:0 14px 28px rgba(0,0,0,0.08);
+    }
+    .pv-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .pv-content{
+      padding:8px 10px;
+      display:grid;
+      gap:8px;
+    }
+    .pv-title{
+      font-size:clamp(18px,2.4vw,26px);
+      font-weight:700;
+      margin:0;
+      color:var(--pv-contrast);
+    }
+    .pv-desc{
+      margin:0;
+      color:var(--pv-sub);
+      font-size:15px;
+      line-height:1.5;
+    }
+    .pv-cta{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--pv-contrast);
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      width:fit-content;
+      box-shadow:0 10px 20px rgba(59,42,35,0.22);
+    }
+
+    .pv-thumbs{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .pv-thumb{
+      width:52px;
+      height:52px;
+      border-radius:12px;
+      overflow:hidden;
+      border:2px solid rgba(59,42,35,.12);
+      background:#fff;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      padding:0;
+      transition:transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .pv-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .pv-thumb:hover{
+      transform:translateY(-2px) rotate(-1.8deg);
+      box-shadow:0 8px 18px rgba(0,0,0,0.15);
+    }
+    .pv-thumb[aria-selected="true"]{
+      box-shadow:0 6px 0 rgba(200,107,90,0.18);
+      border-color:var(--pv-accent);
+    }
+
+    @media (max-width:700px){
+      body{padding:22px 10px;}
+      .pv-slide{grid-template-columns:1fr;gap:10px}
+      .pv-media{height:220px}
+      .pv-product-slider{padding:16px}
+      .pv-thumb{width:44px;height:44px}
+      .pv-header-title{font-size:16px;}
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0
+    }
+
     /* subtle fade-in for the whole slider on load */
-    .pv-product-slider{opacity:0;transform:translateY(6px);transition:opacity .45s ease, transform .45s ease}
-    .pv-product-slider.ready{opacity:1;transform:none}
-    /* small helper: autoplay toggle */
-    .pv-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px}
-    .pv-toggle{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--pv-sub);cursor:pointer}
+    .pv-product-slider{
+      opacity:0;
+      transform:translateY(6px);
+      transition:opacity .45s ease, transform .45s ease;
+    }
+    .pv-product-slider.ready{
+      opacity:1;
+      transform:none;
+    }
+
+    .pv-controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+      margin-top:10px;
+    }
+    .pv-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(255,255,255,0.8);
+      border-radius:999px;
+      padding:6px 10px;
+      border:0;
+      color:var(--pv-sub);
+      cursor:pointer;
+      font-size:12px;
+    }
   </style>
 </head>
 <body>
-  <section id="pv-slider-1" class="pv-product-slider" aria-label="Featured products">
-    
-    
-    <div class="sr-only" aria-live="polite" id="pv-live"></div>
-    <div class="pv-viewport">
-      <div class="pv-preview-fallback" style="height:300px;display:flex;align-items:center;justify-content:center;color:var(--pv-sub)">Product slider loading…</div>
-    </div>
-    <div class="pv-thumbs" role="tablist" aria-label="Product navigation"></div>
-    <div class="pv-controls">
-      <button id="pv-autoplay-toggle" class="pv-toggle" aria-pressed="false">Autoplay: On</button>
-    </div>
-  </section>
+  <div class="pv-page-shell">
+    <!-- 🧩 Small header -->
+    <header class="pv-header">
+      <div class="pv-header-title">Website Feature Showcase</div>
+      <div class="pv-header-sub">A premium layout section you can add to your website UI</div>
+    </header>
+
+    <!-- 🎞️ Centered, colorful product slider -->
+    <section id="pv-slider-1" class="pv-product-slider" aria-label="Featured products">
+      <div class="sr-only" aria-live="polite" id="pv-live"></div>
+      <div class="pv-viewport">
+        <div class="pv-preview-fallback" style="height:300px;display:flex;align-items:center;justify-content:center;color:var(--pv-sub)">Product slider loading…</div>
+      </div>
+      <div class="pv-thumbs" role="tablist" aria-label="Product navigation"></div>
+      <div class="pv-controls">
+        <button id="pv-autoplay-toggle" class="pv-toggle" aria-pressed="false">Autoplay: On</button>
+      </div>
+    </section>
+  </div>
 
   <script>
-  // ---------- SAMPLE PRODUCTS (updated: product-focused images + matching descriptions) ----------
+  // ---------- SAMPLE PRODUCTS (using your Gemini images) ----------
   const products = [
     { title: 'Velvet Peony Sling Bag', desc: 'Pastel-pink velvet crochet sling bag with a layered peony flower on flap and gold chain strap — elegant and handcrafted.', img: 'Gemini_Generated_Image_bl9kmrbl9kmrbl9k.png', link:'#' },
     { title: 'Blossom Summer Skater Dress', desc: 'A soft pastel-peach women’s skater dress with a fitted upper body, short flared skirt, V-neckline, and minimal floral print — lightweight and perfect for summer outings.', img: 'Gemini_Generated_Image_t1sosat1sosat1so.png', link:'#' },
@@ -77,9 +294,8 @@
   if(!root){ console.error('pv-slider-1 not found'); }
   const viewport = root.querySelector('.pv-viewport');
   const thumbsWrap = root.querySelector('.pv-thumbs');
-  // nav buttons were removed from HTML — keep safe refs (may be null)
-  const prevBtn = root.querySelector('.pv-prev');
-  const nextBtn = root.querySelector('.pv-next');
+  const prevBtn = root.querySelector('.pv-prev'); // (not present, safe)
+  const nextBtn = root.querySelector('.pv-next'); // (not present, safe)
   const live = root.querySelector('#pv-live');
   const autoplayToggle = document.getElementById('pv-autoplay-toggle');
 
@@ -104,12 +320,21 @@
     products.forEach((p)=>{
       const slide = document.createElement('article'); slide.className='pv-slide';
       slide.setAttribute('role','group'); slide.setAttribute('aria-roledescription','slide'); slide.setAttribute('aria-hidden','true');
-      slide.innerHTML = `\n        <div class="pv-media">\n          <img src="${p.img}" alt="${p.title}" loading="lazy">\n        </div>\n        <div class="pv-content">\n          <h3 class="pv-title">${p.title}</h3>\n          <p class="pv-desc">${p.desc}</p>\n          <a class="pv-cta" href="${p.link}" target="_blank" rel="noopener">Shop Now →</a>\n        </div>`;
+      slide.innerHTML = `
+        <div class="pv-media">
+          <img src="${p.img}" alt="${p.title}" loading="lazy">
+        </div>
+        <div class="pv-content">
+          <h3 class="pv-title">${p.title}</h3>
+          <p class="pv-desc">${p.desc}</p>
+          <a class="pv-cta" href="${p.link}" target="_blank" rel="noopener">Shop Now →</a>
+        </div>`;
       viewport.appendChild(slide);
     });
 
     render(index);
-    if (prevBtn) prevBtn.addEventListener('click', prev); if (nextBtn) nextBtn.addEventListener('click', next);
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
     document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
 
     // swipe
@@ -123,7 +348,12 @@
     // visibility
     document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stop(); else if(autoplay) play(); });
 
-    autoplayToggle.addEventListener('click', ()=>{ autoplay = !autoplay; autoplayToggle.textContent = 'Autoplay: ' + (autoplay? 'On' : 'Off'); autoplayToggle.setAttribute('aria-pressed', String(!autoplay)); if(autoplay) play(); else stop(); });
+    autoplayToggle.addEventListener('click', ()=>{
+      autoplay = !autoplay;
+      autoplayToggle.textContent = 'Autoplay: ' + (autoplay? 'On' : 'Off');
+      autoplayToggle.setAttribute('aria-pressed', String(!autoplay));
+      if(autoplay) play(); else stop();
+    });
 
     // ready class for small entrance
     root.classList.add('ready');
@@ -136,7 +366,8 @@
     slides.forEach((s,si)=>{
       const active = si===i; s.classList.toggle('pv-active', active);
       s.setAttribute('aria-hidden', String(!active));
-      if(active){ s.removeAttribute('inert'); s.style.visibility='visible'; s.style.pointerEvents='auto'; } else { s.setAttribute('inert',''); s.style.visibility='hidden'; s.style.pointerEvents='none'; }
+      if(active){ s.removeAttribute('inert'); s.style.visibility='visible'; s.style.pointerEvents='auto'; }
+      else { s.setAttribute('inert',''); s.style.visibility='hidden'; s.style.pointerEvents='none'; }
     });
     [...thumbsWrap.children].forEach((b,bi)=> b.setAttribute('aria-selected', bi===i? 'true' : 'false'));
     const p = products[i]; if(live && p) live.textContent = `${p.title}. ${p.desc}`;
@@ -151,8 +382,16 @@
     const targetImg = targetSlide?.querySelector('.pv-media img');
 
     if(targetImg) targetImg.style.opacity = '0'; index = to; render(index);
-    if(targetThumb && targetMedia){ flyThumbToMedia(targetThumb, targetMedia, ()=>{ if(targetImg){ targetImg.style.transition = 'opacity 220ms ease'; targetImg.style.opacity = '1'; } }); }
-    else { if(targetImg) targetImg.style.opacity = '1'; }
+    if(targetThumb && targetMedia){
+      flyThumbToMedia(targetThumb, targetMedia, ()=>{
+        if(targetImg){
+          targetImg.style.transition = 'opacity 220ms ease';
+          targetImg.style.opacity = '1';
+        }
+      });
+    } else {
+      if(targetImg) targetImg.style.opacity = '1';
+    }
     if(user){ if(autoplay) restart(); }
   }
   function next(){ goTo(index+1, true) }
@@ -162,10 +401,11 @@
   function play(){ stop(); timer = setInterval(()=> goTo(index+1), AUTOPLAY_MS); }
   function restart(){ stop(); if(autoplay) play(); }
 
-  // Fly animation function (same friendly arc animation)
+  // Fly animation function
   function flyThumbToMedia(thumbImgEl, mediaEl, onFinish){
     try{
-      const prm = window.matchMedia('(prefers-reduced-motion: reduce)'); if(prm.matches){ onFinish && onFinish(); return; }
+      const prm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if(prm.matches){ onFinish && onFinish(); return; }
       if(typeof stop==='function') stop();
       const FLIGHT_MS = 1300; const GROW_FRACTION = 0.36; const HOLD_START = 0.08; const SWAY_FACTOR = 0.26;
       const tRect = thumbImgEl.getBoundingClientRect(); const mRect = mediaEl.getBoundingClientRect();
@@ -173,7 +413,17 @@
       const ratioW = endW / Math.max(1, startW), ratioH = endH / Math.max(1, startH); const baseUniform = Math.min(ratioW, ratioH);
       const scaleFactor = 0.62; const sEnd = baseUniform * scaleFactor;
       const ghost = thumbImgEl.cloneNode(true);
-      ghost.style.position='fixed'; ghost.style.left=tRect.left+'px'; ghost.style.top=tRect.top+'px'; ghost.style.width=startW+'px'; ghost.style.height=startH+'px'; ghost.style.borderRadius=getComputedStyle(thumbImgEl.parentElement).borderRadius || '10px'; ghost.style.zIndex='9999'; ghost.style.willChange='transform'; ghost.style.transformOrigin='center center'; ghost.style.backfaceVisibility='hidden'; document.body.appendChild(ghost);
+      ghost.style.position='fixed';
+      ghost.style.left=tRect.left+'px';
+      ghost.style.top=tRect.top+'px';
+      ghost.style.width=startW+'px';
+      ghost.style.height=startH+'px';
+      ghost.style.borderRadius=getComputedStyle(thumbImgEl.parentElement).borderRadius || '10px';
+      ghost.style.zIndex='9999';
+      ghost.style.willChange='transform';
+      ghost.style.transformOrigin='center center';
+      ghost.style.backfaceVisibility='hidden';
+      document.body.appendChild(ghost);
       const dx = (mRect.left + mRect.width/2) - (tRect.left + tRect.width/2);
       const dy = (mRect.top + mRect.height/2) - (tRect.top + tRect.height/2);
       const dist = Math.hypot(dx, dy); const sway = Math.min(220, Math.max(70, dist * SWAY_FACTOR)); const sign = (Math.random() < .5 ? -1 : 1);
@@ -189,10 +439,13 @@
       const anim = ghost.animate(kf, { duration: FLIGHT_MS, easing:'linear', fill:'forwards' });
       anim.onfinish = ()=>{ ghost.remove(); if(typeof play==='function' && autoplay) play(); onFinish && onFinish(); };
       anim.oncancel = ()=>{ ghost.remove(); if(typeof play==='function' && autoplay) play(); onFinish && onFinish(); };
-    }catch(e){ console.warn('Fly fail', e); if(typeof play==='function' && autoplay) play(); onFinish && onFinish(); }
+    }catch(e){
+      console.warn('Fly fail', e);
+      if(typeof play==='function' && autoplay) play();
+      onFinish && onFinish();
+    }
   }
 
-  // init on DOM ready
   document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
